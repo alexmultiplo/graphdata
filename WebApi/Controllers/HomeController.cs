@@ -22,10 +22,9 @@ namespace WebApi.Controllers
             //    .Group<ProjectionVisitCountry>("{ _id: '$Atm_Country', Count: { $sum: 1 } }")
             //    .ToListAsync();
 
-
             var model = new IndexModel
             {
-                totalObjects = t
+                TotalObjects = t
                 //VisistByCountry = visitsbyCountry
             };
 

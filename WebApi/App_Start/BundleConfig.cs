@@ -25,7 +25,7 @@ namespace WebApi
                       "~/Content/site.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/charts").Include(
-"~/Scripts/Chart.js", "~/Scripts/moment.js", "~/Scripts/App/apirequests.js"));
+"~/Scripts/Chart.js", "~/Scripts/moment.js", "~/Scripts/App/apirequests.js", "~/Scripts/App/basics.js"));
         }
     }
 }

@@ -1,7 +1,10 @@
-﻿var PagesCountry = function () {
+﻿var querystring = '?start=2017-01-01&end=2017-04-30';
+var host = 'http://localhost:6161/'
+//var host = 'http://192.168.1.20:4400/'
+var PagesCountry = function () {
 
     //var jsonAPICountry = _basecharts.domain + '/data/GetPagesByCountry';
-    var jsonAPICountry = 'http://localhost:6161/api/data/pages';
+    var jsonAPICountry = host + 'api/data/pages/' + querystring;
     //Console.log(jsonAPICountry);
     //Console.log(jsonAPICountry);
     var _data;
@@ -94,18 +97,29 @@
 
 var PagesDay = function () {
 
-    //var jsonAPICountry = _basecharts.domain + '/data/GetPagesByCountry';
-    var jsonAPIDays = 'http://localhost:6161/api/data/days';
-    //Console.log(jsonAPICountry);
-    //Console.log(jsonAPICountry);
+    var jsonAPIDays = host + 'api/data/days/' + querystring;        
+    var jsonGAAPIDays = host + 'api/data/ga-days/' + querystring;
+
     var _data;
     var _gadata;
     var _datasets = new Object();
     var _gadatasets = new Object();
 
     var initLines = function () {
-        jQuery.getJSON(jsonAPIDays).done(function (data) {
 
+        jQuery.getJSON(jsonGAAPIDays).done(function (data) {
+            console.log(jsonGAAPIDays);
+            _gadatasets.labels = [];
+            _gadatasets.pages = [];
+
+            $.each(data.rows, function (i, item) {
+                _gadatasets.labels.push(item[0]);
+                _gadatasets.pages.push(item[6]);
+            });
+        });
+
+        jQuery.getJSON(jsonAPIDays).done(function (data) {
+            console.log(jsonAPIDays);
             // Items
             _data = data.pagesDay;
             _datasets.labels = [];
@@ -115,14 +129,14 @@ var PagesDay = function () {
             $.each(data.pagesDay, function (i, item) {
                 _datasets.labels.push(item.Data);
                 _datasets.pages.push(item.Count);
-                _datasets.bounces.push(item.Count * 0.5);
+                //_datasets.bounces.push(item.Count * 0.5);
             });
 
             var data1 = {
                 labels: _datasets.labels,  //["January", "February", "March", "April", "May", "June", "July", "August", "September"],
                 datasets: [
                     {
-                        label: "Pages by Day",
+                        label: "Pàgines per dia",
                         fill: true,
                         lineTension: 0.1,
                         backgroundColor: "rgba(75,192,192,0.4)",
@@ -144,25 +158,25 @@ var PagesDay = function () {
                         spanGaps: false,
                     },
                     {
-                        label: "Pages GA by Day",
+                        label: "Pàgines GA per dia",
                         fill: true,
                         lineTension: 0.1,
-                        backgroundColor: "rgba(97,192,192,0.4)",
-                        borderColor: "rgba(97,192,192,1)",
+                        backgroundColor: "rgba(255,101,101,0.4)",
+                        borderColor: "rgba(255,51,51,1)",
                         borderCapStyle: 'butt',
                         borderDash: [],
                         borderDashOffset: 0.0,
                         borderJoinStyle: 'miter',
-                        pointBorderColor: "rgba(97,192,192,1)",
-                        pointBackgroundColor: "#fff",
+                        pointBorderColor: "rgba(255,51,51,1)",
+                        pointBackgroundColor: "#eee",
                         pointBorderWidth: 1,
                         pointHoverRadius: 5,
-                        pointHoverBackgroundColor: "rgba(97,192,192,1)",
-                        pointHoverBorderColor: "rgba(220,220,220,1)",
+                        pointHoverBackgroundColor: "rgba(255,51,51,1)",
+                        pointHoverBorderColor: "rgba(255,220,220,1)",
                         pointHoverBorderWidth: 2,
                         pointRadius: 1,
                         pointHitRadius: 10,
-                        data: _datasets.bounces, //[65, 59, 80, 81, 56, 55, 40, 35, 65],
+                        data: _gadatasets.pages, //[65, 59, 80, 81, 56, 55, 40, 35, 65],
                         spanGaps: false,
                     }
                 ]
@@ -182,7 +196,7 @@ var PagesDay = function () {
 
     return {
         init: function () {
-            console.log(jsonAPIDays);
+
             initLines();
         }
     };
@@ -191,6 +205,12 @@ var PagesDay = function () {
 
 // Initialize when page loads
 jQuery(function () {
+
+    if (getUrlParameter('start') != '' && getUrlParameter('end') != '') {
+        querystring = '?start=' + getUrlParameter('start') + '&end=' + getUrlParameter('end'); 
+        console.log(querystring);
+    }
+
     PagesDay.init();
     PagesCountry.init();
 });
