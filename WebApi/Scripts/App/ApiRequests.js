@@ -1,6 +1,9 @@
-﻿var querystring = '?start=2017-01-01&end=2017-04-30';
+﻿var querystring = '?start=2015-01-01&end=2015-12-30';
 var host = 'http://localhost:6161/'
 //var host = 'http://192.168.1.20:4400/'
+
+var _gadatasets = new Object();
+
 var PagesCountry = function () {
 
     //var jsonAPICountry = _basecharts.domain + '/data/GetPagesByCountry';
@@ -95,28 +98,41 @@ var PagesCountry = function () {
  
 }();
 
-var PagesDay = function () {
+var GADay = function () {
+    var jsonGAAPIDays = host + 'api/data/ga-day/' + querystring;
 
-    var jsonAPIDays = host + 'api/data/days/' + querystring;        
-    var jsonGAAPIDays = host + 'api/data/ga-days/' + querystring;
-
-    var _data;
-    var _gadata;
-    var _datasets = new Object();
-    var _gadatasets = new Object();
-
-    var initLines = function () {
-
+    var initGA = function () {
         jQuery.getJSON(jsonGAAPIDays).done(function (data) {
             console.log(jsonGAAPIDays);
             _gadatasets.labels = [];
             _gadatasets.pages = [];
+            _gadatasets.users = [];
 
             $.each(data.rows, function (i, item) {
                 _gadatasets.labels.push(item[0]);
                 _gadatasets.pages.push(item[6]);
+                _gadatasets.users.push(item[1]);
             });
         });
+    };
+
+    return {
+        init: function () {
+
+            initGA();
+        }
+    };
+}();
+
+var PagesDay = function () {
+
+    var jsonAPIDays = host + 'api/data/pages-day/' + querystring;        
+
+    var _data;
+    var _datasets = new Object();
+
+
+    var initLines = function () {
 
         jQuery.getJSON(jsonAPIDays).done(function (data) {
             console.log(jsonAPIDays);
@@ -203,6 +219,97 @@ var PagesDay = function () {
 
 }();
 
+var UsersDay = function () {
+
+    var initUsers = function () {
+
+        var jsonAPIDays = host + 'api/data/users-day/' + querystring;    
+
+        var _data;
+        var _datasets = new Object();
+
+        jQuery.getJSON(jsonAPIDays).done(function (data) {
+            console.log(jsonAPIDays);
+            // Items
+            _data = data.pagesDay;
+            _datasets.labels = [];
+            _datasets.users = [];
+
+            $.each(data.pagesDay, function (i, item) {
+                _datasets.labels.push(item.Data);
+                _datasets.users.push(item.Count);
+            });
+
+            var data1 = {
+                labels: _datasets.labels,  //["January", "February", "March", "April", "May", "June", "July", "August", "September"],
+                datasets: [
+                    {
+                        label: "Usuaris per dia",
+                        fill: true,
+                        lineTension: 0.1,
+                        backgroundColor: "rgba(75,192,192,0.4)",
+                        borderColor: "rgba(75,250,75,1)",
+                        borderCapStyle: 'butt',
+                        borderDash: [],
+                        borderDashOffset: 0.0,
+                        borderJoinStyle: 'miter',
+                        pointBorderColor: "rgba(75,250,75,1)",
+                        pointBackgroundColor: "#fff",
+                        pointBorderWidth: 1,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: "rgba(75,250,75,1)",
+                        pointHoverBorderColor: "rgba(220,220,220,1)",
+                        pointHoverBorderWidth: 2,
+                        pointRadius: 1,
+                        pointHitRadius: 10,
+                        data: _datasets.users, //[65, 59, 80, 81, 56, 55, 40, 35, 65],
+                        spanGaps: false,
+                    },
+                    {
+                        label: "Usuaris GA per dia",
+                        fill: true,
+                        lineTension: 0.1,
+                        backgroundColor: "rgba(255,101,101,0.4)",
+                        borderColor: "rgba(255,51,51,1)",
+                        borderCapStyle: 'butt',
+                        borderDash: [],
+                        borderDashOffset: 0.0,
+                        borderJoinStyle: 'miter',
+                        pointBorderColor: "rgba(255,51,51,1)",
+                        pointBackgroundColor: "#eee",
+                        pointBorderWidth: 1,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: "rgba(255,51,51,1)",
+                        pointHoverBorderColor: "rgba(255,220,220,1)",
+                        pointHoverBorderWidth: 2,
+                        pointRadius: 1,
+                        pointHitRadius: 10,
+                        data: _gadatasets.users, //[65, 59, 80, 81, 56, 55, 40, 35, 65],
+                        spanGaps: false,
+                    }
+                ]
+            };
+
+            var ctxl = document.getElementById("uniqueUsers");
+            var myLineChart = new Chart(ctxl, {
+                type: 'line',
+                data: data1
+                //options: options
+            });
+
+
+        }
+        )
+    };
+
+    return {
+        init: function () {
+
+            initUsers();
+        }
+    };
+}();
+
 // Initialize when page loads
 jQuery(function () {
 
@@ -211,6 +318,8 @@ jQuery(function () {
         console.log(querystring);
     }
 
+    GADay.init();
     PagesDay.init();
+    UsersDay.init();
     PagesCountry.init();
 });

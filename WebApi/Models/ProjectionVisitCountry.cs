@@ -42,4 +42,13 @@ namespace GraphData.Models
         public int Total { get; set; }
     }
 
+
+    public class DailyUserStat
+    {
+        public int Day { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public string User { get; set; }
+    }
+
 }

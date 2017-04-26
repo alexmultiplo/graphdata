@@ -52,7 +52,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("days")]
+        [Route("pages-day")]
         public async Task<PagesDay> GetPagesByDay(DateTime? start, DateTime? end)
         {
             var NavContext = new NavigationContext();
@@ -79,7 +79,7 @@ namespace WebApi.Controllers
             if (end == null) end = endDate;
 
             var visitsbyCountry = await NavContext.Pages.Aggregate()
-            .Match(x => x.Insertdate > start && x.Insertdate <= end)
+            .Match(x => x.Insertdate >= start && x.Insertdate <= end)
             //.Match("{ \"Atm_Country\" : \"ES\" }")
             .Group(r => new { groupedYear = r.Insertdate.Year, groupedMonth = r.Insertdate.Month, groupedDay = r.Insertdate.Day }, g =>
                new
@@ -100,7 +100,104 @@ namespace WebApi.Controllers
 
             List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
 
-            DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day); 
+            DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
+            foreach (var item in visitsbyCountry)
+            {
+                DateTime dt = new DateTime(item.Year, item.Month, item.Day);
+                if (dt == aux)
+                {
+                    ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                    {
+                        Data = dt,
+                        Count = item.Total
+                    };
+                    pagesDate.Add(pkdv);
+                    aux = dt;
+                }
+                else
+                {
+                    int sparedays = dt.Subtract(aux).Days;
+                    for (int i = 0; i < sparedays; i++)
+                    {
+                        DateTime newday = aux.AddDays(1);
+                        aux = newday;
+                        if (newday == dt)
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = dt,
+                                Count = item.Total
+                            };
+                            pagesDate.Add(pkdv);
+                        }
+                        else
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = newday,
+                                Count = 0
+                            };
+                            pagesDate.Add(pkdv);
+                        }
+                    }
+                }
+
+
+            }
+
+            PagesDay pd = new PagesDay()
+            {
+                pagesDay = pagesDate.OrderBy(x => x.Data)
+            };
+
+            return pd;
+        }
+
+        [HttpGet]
+        [Route("users-day")]
+        public async Task<PagesDay> GetUsersByDay(DateTime? start, DateTime? end)
+        {
+            var NavContext = new NavigationContext();
+
+            if (start == null) start = startDate;
+            if (end == null) end = endDate;
+
+            var visitsbyCountry = await NavContext.Pages.Aggregate(new AggregateOptions { AllowDiskUse = true })
+            .Match(x => x.Insertdate >= start && x.Insertdate <= end)
+            .Group(r => new { groupedYear = r.Insertdate.Year, groupedMonth = r.Insertdate.Month, groupedDay = r.Insertdate.Day, users = r.Atm_ID }, g =>
+               new
+               {
+                   Key = g.Key,
+                   total = g.Count()
+               })
+            .Project(r => new DailyUserStat()
+            {
+                Day = r.Key.groupedDay,
+                Month = r.Key.groupedMonth,
+                Year = r.Key.groupedYear,
+                User = r.Key.users
+
+            })
+            .Group(y => new { groupedYear = y.Year, groupedMonth = y.Month, groupedDay = y.Day }, o =>
+              new
+              {
+                  Key = o.Key,
+                  total = o.Count()
+              })
+            .Project(r => new DailyStat()
+            {
+                Day = r.Key.groupedDay,
+                Month = r.Key.groupedMonth,
+                Year = r.Key.groupedYear,
+                Total = r.total
+
+            })
+            .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
+            .ToListAsync();
+
+            List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
+
+            DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
             foreach (var item in visitsbyCountry)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
@@ -131,7 +228,7 @@ namespace WebApi.Controllers
                             pagesDate.Add(pkdv);
                         }
                         else
-                        {                           
+                        {
                             ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
                             {
                                 Data = newday,
@@ -141,8 +238,8 @@ namespace WebApi.Controllers
                         }
                     }
                 }
-                
-                
+
+
             }
 
             PagesDay pd = new PagesDay()
@@ -153,8 +250,9 @@ namespace WebApi.Controllers
             return pd;
         }
 
+
         [HttpGet]
-        [Route("ga-days")]
+        [Route("ga-day")]
         public GaData RunGAAPI(DateTime start, DateTime end)
         {
             //var _logger = EngineContext.Current.Resolve<ILogger>();
@@ -168,7 +266,7 @@ namespace WebApi.Controllers
             string keyFilePath;
             if (path == "localhost") keyFilePath = System.IO.Path.Combine(System.Web.HttpContext.Current.ApplicationInstance.Server.MapPath("~/App_Data"), "Get Andorra Analytics Values-73dc38419daa.p12");
             else keyFilePath = System.IO.Path.Combine(path, "Get Andorra Analytics Values-73dc38419daa.p12");
-            
+
             //string keyFilePath = Path.Combine(_webHelper.GetApp_DataPath(), EngineContext.Current.Resolve<FC_Settings_GoogleAPI>().GA_ApiFilename);
 
             string serviceAccountEmail = "388321649537-h5stds7lmne7qhl5e3uct3jvfomcc058@developer.gserviceaccount.com";  // found in developer console
