@@ -201,7 +201,7 @@ namespace WebApi.Controllers
             foreach (var item in visitsbyCountry)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
-                if (dt == aux.AddDays(1))
+                if (dt == aux)
                 {
                     ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
                     {

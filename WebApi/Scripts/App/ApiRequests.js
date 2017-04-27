@@ -6,10 +6,8 @@ var _gadatasets = new Object();
 
 var PagesCountry = function () {
 
-    //var jsonAPICountry = _basecharts.domain + '/data/GetPagesByCountry';
     var jsonAPICountry = host + 'api/data/pages/' + querystring;
-    //Console.log(jsonAPICountry);
-    //Console.log(jsonAPICountry);
+
     var _data;
     var _gadata;
     var _datasets = new Object();
