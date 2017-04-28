@@ -3,19 +3,20 @@
     <h1>Navigation ALX</h1>
     <p class="lead">Aquestes gràfiques son una represetació de les propies d'ALX i les dades de Google Analytics referents a visitandorra.com.</p>
 </div>
-@*<div class="filter">
-        <div class="datepicker-input">
+<div class="row col-sm-12">
+        <div class="datepicker-input col-sm-2">
             <input id="startDate" class="startDate" name="startDate" value="" data-provide="datepicker" />
-            <span class="field-validation-valid" data-valmsg-for="startDate" data-valmsg-replace="true" ></span>
+            @*<span class="field-validation-valid" data-valmsg-for="startDate" data-valmsg-replace="true" ></span>*@
         </div>
-        <div class="datepicker-input">
+        <div class="datepicker-input col-sm-2">
             <input id="endDate" class="endDate" name="endDate" value="" data-provide="datepicker"/>
-            <span class="field-validation-valid" data-valmsg-for="endDate" data-valmsg-replace="true" ></span>
+            @*<span class="field-validation-valid" data-valmsg-for="endDate" data-valmsg-replace="true" ></span>*@
         </div>
+    <div class="datepicker-input col-sm-2">
+        <a id="apply-filter" class=""><i class="si si-reload"></i>Cercar</a>
     </div>
-    <div class="datepicker-input">
-        <a id="apply-filter" class=""><i class="si si-reload"></i>Cercar</a>width="300" height="200"
-    </div>*@
+    </div>
+
 <div>
     <div class="">
         <h3>Total planes vistes al periode @Html.DisplayFor(model => model.TotalObjects) </h3>

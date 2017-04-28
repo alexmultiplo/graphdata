@@ -37,8 +37,8 @@ namespace WebApi.Controllers
             //.Match(x => x.Insertdate >= Convert.ToDateTime("2015-10-01T00:00:00.000Z") && x.Insertdate <= Convert.ToDateTime("2015-11-30T00:00:00.000Z"))
 
             var visitsbyCountry = await NavContext.Pages.Aggregate()
-                .Match(x => x.Insertdate >= start && x.Insertdate <= end)
-                .Match("{ \"Atm_Country\" : { $in: [\"ES\", \"FR\", \"GB\", \"RU\", \"AD\", \"DE\", \"US\"] } }")
+                .Match(x => x.Insertdate > start && x.Insertdate <= end)
+                .Match("{ \"Atm_Country\" : { $in: [\"ES\", \"FR\", \"GB\", \"RU\", \"AD\", \"DE\", \"NL\", \"BE\"] } }")
                 .Group<ProjectionKeyValue>("{ _id: '$Atm_Country', Count: { $sum: 1 } }")
                 .SortBy(x => x.Name)
                 .ToListAsync();
@@ -79,7 +79,7 @@ namespace WebApi.Controllers
             if (end == null) end = endDate;
 
             var visitsbyCountry = await NavContext.Pages.Aggregate()
-            .Match(x => x.Insertdate >= start && x.Insertdate <= end)
+            .Match(x => x.Insertdate > start && x.Insertdate <= end)
             //.Match("{ \"Atm_Country\" : \"ES\" }")
             .Group(r => new { groupedYear = r.Insertdate.Year, groupedMonth = r.Insertdate.Month, groupedDay = r.Insertdate.Day }, g =>
                new
@@ -99,8 +99,13 @@ namespace WebApi.Controllers
             .ToListAsync();
 
             List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
-
+            
             DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
+            if (aux < start)
+            {
+                visitsbyCountry.RemoveAt(0);
+                aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
+            }
             foreach (var item in visitsbyCountry)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
@@ -112,7 +117,7 @@ namespace WebApi.Controllers
                         Count = item.Total
                     };
                     pagesDate.Add(pkdv);
-                    aux = dt;
+                    aux = dt.AddDays(1);
                 }
                 else
                 {
@@ -163,7 +168,7 @@ namespace WebApi.Controllers
             if (end == null) end = endDate;
 
             var visitsbyCountry = await NavContext.Pages.Aggregate(new AggregateOptions { AllowDiskUse = true })
-            .Match(x => x.Insertdate >= start && x.Insertdate <= end)
+            .Match(x => x.Insertdate > start && x.Insertdate <= end)
             .Group(r => new { groupedYear = r.Insertdate.Year, groupedMonth = r.Insertdate.Month, groupedDay = r.Insertdate.Day, users = r.Atm_ID }, g =>
                new
                {
@@ -198,6 +203,11 @@ namespace WebApi.Controllers
             List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
 
             DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
+            if (aux < start)
+            {
+                visitsbyCountry.RemoveAt(0);
+                aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
+            }
             foreach (var item in visitsbyCountry)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
@@ -209,7 +219,7 @@ namespace WebApi.Controllers
                         Count = item.Total
                     };
                     pagesDate.Add(pkdv);
-                    aux = dt;
+                    aux = dt.AddDays(1);
                 }
                 else
                 {
