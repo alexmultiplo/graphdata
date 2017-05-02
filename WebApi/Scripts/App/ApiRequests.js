@@ -376,10 +376,10 @@ jQuery(function () {
             GADay.init();
             PagesDay.clear();
             PagesDay.update();
-            PagesDay.init();
+            //PagesDay.init();
             UsersDay.clear();
             UsersDay.update();
-            UsersDay.init();
+            //UsersDay.init();
             PagesCountry.init();
         }
 
