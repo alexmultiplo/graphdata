@@ -1,4 +1,25 @@
-﻿
+﻿var optspin = {
+    lines: 11 // The number of lines to draw
+    , length: 28 // The length of each line
+    , width: 14 // The line thickness
+    , radius: 43 // The radius of the inner circle
+    , scale: 1.75 // Scales overall size of the spinner
+    , corners: 0.9 // Corner roundness (0..1)
+    , color: '#000' // #rgb or #rrggbb or array of colors
+    , opacity: 0.35 // Opacity of the lines
+    , rotate: 0 // The rotation offset
+    , direction: 1 // 1: clockwise, -1: counterclockwise
+    , speed: 1.1 // Rounds per second
+    , trail: 56 // Afterglow percentage
+    , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+    , zIndex: 2e9 // The z-index (defaults to 2000000000)
+    , className: 'spinner' // The CSS class to assign to the spinner
+    , top: '52%' // Top position relative to parent
+    , left: '50%' // Left position relative to parent
+    , shadow: false // Whether to render a shadow
+    , hwaccel: false // Whether to use hardware acceleration
+    , position: 'absolute' // Element positioning
+}
     var querystring //= '?start=2017-01-01&end=2017-04-30';
     var host = 'http://localhost:6161/'
     //var host = 'http://192.168.1.20:4400/'
@@ -351,7 +372,10 @@
         return {
             init: function () {
 
+                var target = document.getElementById('usersday')
+                var spinner = new Spinner(optspin).spin(target);
                 initUsers();
+                spinner.stop();
             },
 
             clear: function () {
@@ -376,10 +400,10 @@ jQuery(function () {
             GADay.init();
             PagesDay.clear();
             PagesDay.update();
-            //PagesDay.init();
+            PagesDay.init();
             UsersDay.clear();
             UsersDay.update();
-            //UsersDay.init();
+            UsersDay.init();
             PagesCountry.init();
         }
 
@@ -388,15 +412,21 @@ jQuery(function () {
 
 // Initialize when page loads
 jQuery(function () {
+    
     console.log('ready');
+
     if (getUrlParameter('start') != '' && getUrlParameter('end') != '') {
         querystring = '?start=' + getUrlParameter('start') + '&end=' + getUrlParameter('end');
+    } else {
+        querystring = '?start=2017-03-30&end=2017-07-01';
+    }
+
         console.log(querystring);
         GADay.init();
+        PagesCountry.init();
         PagesDay.init();
         UsersDay.init();
         PagesCountry.init();
-    }
 
 
 });

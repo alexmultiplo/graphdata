@@ -13,4 +13,7 @@ jQuery(function () {
         maxViewMode: 2,
         todayBtn: true
     });
+
 });
+
+
