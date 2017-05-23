@@ -123,11 +123,13 @@
                 _gadatasets.labels = [];
                 _gadatasets.pages = [];
                 _gadatasets.users = [];
+                _gadatasets.sessions = [];
 
                 $.each(data.rows, function (i, item) {
                     _gadatasets.labels.push(item[0]);
                     _gadatasets.pages.push(item[6]);
-                    _gadatasets.users.push(item[1]);
+                    _gadatasets.users.push(item[2]);
+                    _gadatasets.sessions.push(item[1]);
                 });
             });
         };
@@ -136,6 +138,7 @@
             _gadatasets.labels = null;
             _gadatasets.pages = null;
             _gadatasets.users = null;
+            _gadatasets.sessions = null;
         };
 
         return {
@@ -151,6 +154,122 @@
 
         };
     }();
+
+    var VisitsDay = function () {
+
+        var _datasets = new Object();
+        var initLines = function () {
+            var jsonAPIDays = host + 'api/data/dtmvisits-day/' + querystring;
+            jQuery.getJSON(jsonAPIDays).done(function (data) {
+                console.log(jsonAPIDays);
+                // Items
+                _datasets.labels = [];
+                _datasets.visits = [];
+                _datasets.bounces = [];
+
+                $.each(data.visitsDay, function (i, item) {
+                    _datasets.labels.push(item.Data);
+                    _datasets.visits.push(item.Count);
+                });
+
+                var data1 = {
+                    labels: _datasets.labels,  //["January", "February", "March", "April", "May", "June", "July", "August", "September"],
+                    datasets: [
+                        {
+                            label: "Visites per dia",
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(75,192,192,0.4)",
+                            borderColor: "rgba(75,192,192,1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(75,192,192,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data: _datasets.visits,
+                            spanGaps: false,
+                        },
+                        {
+                            label: "Visites GA per dia",
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(255,101,101,0.4)",
+                            borderColor: "rgba(255,51,51,1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(255,51,51,1)",
+                            pointBackgroundColor: "#eee",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(255,51,51,1)",
+                            pointHoverBorderColor: "rgba(255,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data: _gadatasets.sessions, //[65, 59, 80, 81, 56, 55, 40, 35, 65],
+                            spanGaps: false,
+                        }
+                    ]
+                };
+
+                var ctxl = document.getElementById("visits");
+                var myLineChart = new Chart(ctxl, {
+                    type: 'line',
+                    data: data1
+                    //options: options
+                });
+
+
+            }
+            )
+        };
+
+        var Update = function () {
+            var ctxl = document.getElementById("visits");
+            var myLineChart = new Chart(ctxl, {
+                type: 'line',
+            });
+            myLineChart.destroy();
+            VisitsDay.init();
+
+        };
+
+        var ClearLines = function () {
+            var ctxl = document.getElementById("visits");
+            var myLineChart = new Chart(ctxl, {
+                type: 'line',
+            });
+            myLineChart.clear();
+        };
+
+
+
+        return {
+            init: function () {
+                initLines();
+            },
+
+            clear: function () {
+                ClearLines();
+            },
+
+            update: function () {
+                Update();
+            }
+        };
+
+    }();
+
 
     var PagesDay = function () {
 
@@ -398,13 +517,19 @@ jQuery(function () {
 
             GADay.reset();
             GADay.init();
+
             PagesDay.clear();
             PagesDay.update();
-            PagesDay.init();
+            //PagesDay.init();
+
+            VisitsDay.clear();
+            VisitsDay.update();
+            //VisitsDay.init();
+
             UsersDay.clear();
             UsersDay.update();
-            UsersDay.init();
-            PagesCountry.init();
+            //UsersDay.init();
+            //PagesCountry.init();
         }
 
     });
@@ -423,8 +548,9 @@ jQuery(function () {
 
         console.log(querystring);
         GADay.init();
-        PagesCountry.init();
+        //PagesCountry.init();
         PagesDay.init();
+        VisitsDay.init();
         UsersDay.init();
         PagesCountry.init();
 

@@ -34,6 +34,11 @@ namespace GraphData.Models
         public IEnumerable<ProjectionKeyDateValue> pagesDay { get; set; }
     }
 
+    public class VisitsDay
+    {
+        public IEnumerable<ProjectionKeyDateValue> visitsDay { get; set; }
+    }
+
     public class DailyStat
     {
         public int Day { get; set; }

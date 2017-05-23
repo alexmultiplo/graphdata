@@ -220,8 +220,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DTMVisit.cs" />
     <Compile Include="Models\IndexModel.cs" />
     <Compile Include="Models\Navigation.cs" />
+    <Compile Include="Models\DTMVisitContext.cs" />
     <Compile Include="Models\NavigationContext.cs" />
     <Compile Include="Models\ProjectionVisitCountry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -361,7 +363,9 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\spin.js" />
     <Content Include="Scripts\spin.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

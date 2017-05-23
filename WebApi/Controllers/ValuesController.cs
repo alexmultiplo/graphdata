@@ -52,6 +52,97 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("dtmvisits-day")]
+        public async Task<VisitsDay> GetDTMVisitsByDay(DateTime? start, DateTime? end)
+        {
+            var DTMContext = new DTMVisitContext();
+
+            if (start == null) start = startDate;
+            if (end == null) end = endDate;
+
+            var visitsDTMbyday = await DTMContext.dtmVisits.Aggregate()
+            .Match(x => x.DATA_HORA_INICI > start && x.DATA_HORA_INICI <= end)
+            .Group(r => new { groupedYear = r.DATA_HORA_INICI.Year, groupedMonth = r.DATA_HORA_INICI.Month, groupedDay = r.DATA_HORA_INICI.Day }, g =>
+               new
+               {
+                   Key = g.Key,
+                   total = g.Count()
+               })
+            .Project(r => new DailyStat()
+            {
+                Day = r.Key.groupedDay,
+                Month = r.Key.groupedMonth,
+                Year = r.Key.groupedYear,
+                Total = r.total
+            })
+            .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
+            .ToListAsync();
+
+            List<ProjectionKeyDateValue> visitsDate = new List<ProjectionKeyDateValue>();
+
+            if (visitsDTMbyday.Count == 0) return new VisitsDay();
+
+            DateTime aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
+            if (aux < start)
+            {
+                visitsDTMbyday.RemoveAt(0);
+                aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
+            }
+            foreach (var item in visitsDTMbyday)
+            {
+                DateTime dt = new DateTime(item.Year, item.Month, item.Day);
+                if (dt == aux)
+                {
+                    ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                    {
+                        Data = dt,
+                        Count = item.Total
+                    };
+                    visitsDate.Add(pkdv);
+                    aux = dt.AddDays(1);
+                }
+                else
+                {
+                    int sparedays = dt.Subtract(aux).Days;
+                    for (int i = 0; i < sparedays; i++)
+                    {
+                        DateTime newday = aux.AddDays(1);
+                        aux = newday;
+                        if (newday == dt)
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = dt,
+                                Count = item.Total
+                            };
+                            visitsDate.Add(pkdv);
+                        }
+                        else
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = newday,
+                                Count = 0
+                            };
+                            visitsDate.Add(pkdv);
+                        }
+                    }
+                }
+
+
+            }
+
+            VisitsDay pd = new VisitsDay()
+            {
+                visitsDay = visitsDate.OrderBy(x => x.Data)
+            };
+
+            return pd;
+
+        }
+
+
+        [HttpGet]
         [Route("pages-day")]
         public async Task<PagesDay> GetPagesByDay(DateTime? start, DateTime? end)
         {
@@ -99,7 +190,9 @@ namespace WebApi.Controllers
             .ToListAsync();
 
             List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
-            
+
+            if (visitsbyCountry.Count == 0) return new PagesDay();
+
             DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
             if (aux < start)
             {
@@ -201,6 +294,8 @@ namespace WebApi.Controllers
             .ToListAsync();
 
             List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
+
+            if (visitsbyCountry.Count == 0) return new PagesDay();
 
             DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
             if (aux < start)

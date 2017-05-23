@@ -17,22 +17,27 @@
         <a id="apply-filter" class=""><i class="si si-reload"></i>Cercar</a>
     </div>
     </div>
-
-<div>
-    <div class="">
-        <h3>Total planes vistes al periode @Html.DisplayFor(model => model.TotalObjects) </h3>
-    </div>
-    <div id="pagesday" class="row">
+<div class="row">
+    <h3>Total planes vistes al periode @Html.DisplayFor(model => model.TotalObjects) </h3>
+</div>
+<div class="row col-sm-12">
+    <div id="pagesday" class="col-sm-6">
         <canvas id="myLineChart" ></canvas>
     </div>
     @*<div id="pagestoday" class="row">
         <canvas id="todayLine"></canvas>
     </div>*@
-    <div id="usersday" class="row">
-        <canvas id="uniqueUsers"></canvas>
-    </div>
-    <div class="row">
-        <canvas id="myBarChart" ></canvas>
+    <div id="visitsday" class="col-sm-6">
+        <canvas id="visits"></canvas>
     </div>
 
+    @*<div class="row">
+        <canvas id="myBarChart" ></canvas>
+    </div>*@
+
 </div>
+<div class="row col-sm-12">
+    <div id="usersday" class="col-sm-offset-4">
+        <canvas id="uniqueUsers"></canvas>
+    </div>
+    </div>
