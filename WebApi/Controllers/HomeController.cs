@@ -31,6 +31,14 @@ namespace WebApi.Controllers
             return View(model);
         }
 
+        [Route("campaign")]
+        public async Task<ActionResult> Campaign()
+        {
 
+            var model = new IndexModel();
+
+
+            return View(model);
+        }
     }
 }

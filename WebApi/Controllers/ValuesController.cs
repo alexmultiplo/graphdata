@@ -240,6 +240,8 @@ namespace WebApi.Controllers
             if (start == null) start = startDate;
             if (end == null) end = endDate;
 
+            if (!action.StartsWith("{")) action = "{" + action + "}";
+
             var visitsDTMbyday = await DTMContext.dtmVisits.Aggregate()
             .Match(x => x.DATA_HORA_INICI > start && x.DATA_HORA_INICI <= end && (x.CAMPAIGN_ACTION_ID == action.ToUpper() || x.CAMPAIGN_ACTION_ID == action.ToLower()))
             .Group(r => new { groupedYear = r.DATA_HORA_INICI.Year, groupedMonth = r.DATA_HORA_INICI.Month, groupedDay = r.DATA_HORA_INICI.Day }, g =>

@@ -245,6 +245,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\App\ApiRequests.js" />
     <Content Include="Scripts\App\basics.js" />
+    <Content Include="Scripts\App\CompareActions.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -379,6 +380,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Campaign.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -417,7 +419,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>40096</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:6161</IISUrl>
+          <IISUrl>http://localhost:6161/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

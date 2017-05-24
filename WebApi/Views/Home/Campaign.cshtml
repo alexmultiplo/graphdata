@@ -1,0 +1,49 @@
+﻿@model GraphData.Models.IndexModel
+@section Scripts
+{
+    <script src="@Url.Content("~/Scripts/App/CompareActions.js")"></script>
+}
+<div class="row">
+    <h1>Navigation ALX</h1>
+    <p class="lead">Aquestes gràfiques son una represetació de les propies d'ALX i les dades de Google Analytics referents a visitandorra.com.</p>
+</div>
+<div class="row col-sm-12 ">
+    <div class="col-sm-2">
+        <span>Data inici cerca</span><input id="startDate" class="datepicker-input form-control" />
+    </div>
+    <div class="col-sm-2">
+        <span>Data fi cerca</span><input id="endDate" class="datepicker-input  form-control" name="endDate" />
+    </div>
+</div>
+<div class="row col-sm-12 ">
+    <div class="col-sm-2">
+        <span>ALX campaign action OID</span><input id="actionOid" class="form-control" />
+    </div>
+</div>
+<div class="row col-sm-12 ">
+    <div class="col-sm-2">
+        <span>UTM Campaign</span><input id="utm_campaign" class="form-control" />
+    </div>
+    <div class="col-sm-2">
+        <span>UTM Source</span><input id="utm_source" class="form-control" />
+    </div>
+    <div class="col-sm-2">
+        <span>UTM Medium</span><input id="utm_medium" class="form-control" />
+    </div>
+</div>
+<div class="row">
+    <div class=" col-sm-2">
+        <a id="action-filter" class="btn">Cercar</a>
+    </div>
+</div>
+<div class="row">
+    <h3>Comparativa d'accions de campanya ALX i Google Analytics </h3>
+</div>
+<div class="row">
+    <div id="visitsactioncompare">
+        <canvas id="visitsaction"></canvas>
+    </div>
+</div>
+
+
+

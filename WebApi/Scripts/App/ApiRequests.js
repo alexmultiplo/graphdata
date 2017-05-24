@@ -21,8 +21,8 @@
     , position: 'absolute' // Element positioning
 }
 var querystring //= '?start=2017-01-01&end=2017-04-30';
-var host = 'http://localhost:6161/'
-//var host = 'http://192.168.1.20:4400/'
+//var host = 'http://localhost:6161/';
+var host = 'http://192.168.1.20:4400/'
 
 var _gadatasets = new Object();
 var _gacampaigndatasets = new Object();
@@ -196,8 +196,6 @@ var GACampaignDay = function () {
 
     };
 }();
-
-
 
 var VisitsDayFull = function () {
 
@@ -794,6 +792,8 @@ var UsersDay = function () {
     };
 }();
 
+
+
 jQuery(function () {
     // Call API on option button click
     jQuery('#apply-filter').on('click', function () {
@@ -831,6 +831,21 @@ jQuery(function () {
         }
 
     });
+
+    jQuery('#action-filter').on('click', function () {
+
+        if (jQuery('#startDate').val() != undefined && jQuery('#endDate').val() != undefined) {
+            var queryALX = '?start=' + jQuery('#startDate').val() + '&end=' + jQuery('#endDate').val() + '&action=' + jQuery('#action').val();
+            var queryGA = '?start=' + jQuery('#startDate').val() + '&end=' + jQuery('#endDate').val() + '&campaign=' + jQuery('#utm_campaign').val() + '&source=' + jQuery('#utm_source').val() + '&medium=' + jQuery('#utm_medium').val();
+            console.log(querystring);
+
+            VisitsDayActionCompare.clear();
+            VisitsDayActionCompare.update(queryALX, queryGA);
+
+        }
+
+    });
+
 });
 
 // Initialize when page loads
