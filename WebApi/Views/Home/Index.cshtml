@@ -4,40 +4,49 @@
     <p class="lead">Aquestes gràfiques son una represetació de les propies d'ALX i les dades de Google Analytics referents a visitandorra.com.</p>
 </div>
 <div class="row col-sm-12 ">
-        <div class="col-sm-2">
-            <input id="startDate" class="datepicker-input form-control" />
-            @*<span class="field-validation-valid" data-valmsg-for="startDate" data-valmsg-replace="true" > class="startDate"</span>*@
+    <div class="col-sm-2">
+        <input id="startDate" class="datepicker-input form-control" />
+        @*<span class="field-validation-valid" data-valmsg-for="startDate" data-valmsg-replace="true" > class="startDate"</span>*@
 
-        </div>
-        <div class="col-sm-2">
-            <input id="endDate" class="datepicker-input  form-control" name="endDate" />
-            @*<span class="field-validation-valid" data-valmsg-for="endDate" data-valmsg-replace="true" ></span>*@
-        </div>
+    </div>
+    <div class="col-sm-2">
+        <input id="endDate" class="datepicker-input  form-control" name="endDate" />
+        @*<span class="field-validation-valid" data-valmsg-for="endDate" data-valmsg-replace="true" ></span>*@
+    </div>
     <div class=" col-sm-2">
         <a id="apply-filter" class=""><i class="si si-reload"></i>Cercar</a>
     </div>
-    </div>
+</div>
 <div class="row">
     <h3>Total planes vistes al periode @Html.DisplayFor(model => model.TotalObjects) </h3>
 </div>
+<div class="row">
+    <div id="visitsfullday">
+        <canvas id="visitsfull"></canvas>
+    </div>
+</div>
+
 <div class="row col-sm-12">
     <div id="pagesday" class="col-sm-6">
-        <canvas id="myLineChart" ></canvas>
+        <canvas id="myLineChart"></canvas>
     </div>
+    <div id="usersday" class="col-sm-offset-6">
+        <canvas id="uniqueUsers"></canvas>
+    </div>
+</div>
+<!--<div class="row col-sm-12">
+
     @*<div id="pagestoday" class="row">
-        <canvas id="todayLine"></canvas>
-    </div>*@
+            <canvas id="todayLine"></canvas>
+        </div>*@
     <div id="visitsday" class="col-sm-6">
         <canvas id="visits"></canvas>
     </div>
-
+    <div id="visitscampaignday" class="col-sm-6">
+        <canvas id="visitscampaign"></canvas>
+    </div>
     @*<div class="row">
-        <canvas id="myBarChart" ></canvas>
-    </div>*@
+            <canvas id="myBarChart" ></canvas>
+        </div>*@
 
-</div>
-<div class="row col-sm-12">
-    <div id="usersday" class="col-sm-offset-4">
-        <canvas id="uniqueUsers"></canvas>
-    </div>
-    </div>
+</div> -->

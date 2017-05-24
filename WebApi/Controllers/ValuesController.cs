@@ -141,6 +141,185 @@ namespace WebApi.Controllers
 
         }
 
+        //lletx! s'ha de canviar per quelcom que reitilitzi la funció original!  
+        [HttpGet]
+        [Route("dtmcampaignvisits-day")]
+        public async Task<VisitsDay> GetDTMCampaignVisitsByDay(DateTime? start, DateTime? end)
+        {
+            var DTMContext = new DTMVisitContext();
+
+            if (start == null) start = startDate;
+            if (end == null) end = endDate;
+
+            var visitsDTMbyday = await DTMContext.dtmVisits.Aggregate()
+            .Match(x => x.DATA_HORA_INICI > start && x.DATA_HORA_INICI <= end && x.CAMPAIGN_ACTION_ID != "{00000000-0000-0000-0000-000000000000}")
+            .Group(r => new { groupedYear = r.DATA_HORA_INICI.Year, groupedMonth = r.DATA_HORA_INICI.Month, groupedDay = r.DATA_HORA_INICI.Day }, g =>
+               new
+               {
+                   Key = g.Key,
+                   total = g.Count()
+               })
+            .Project(r => new DailyStat()
+            {
+                Day = r.Key.groupedDay,
+                Month = r.Key.groupedMonth,
+                Year = r.Key.groupedYear,
+                Total = r.total
+            })
+            .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
+            .ToListAsync();
+
+            List<ProjectionKeyDateValue> visitsDate = new List<ProjectionKeyDateValue>();
+
+            if (visitsDTMbyday.Count == 0) return new VisitsDay();
+
+            DateTime aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
+            if (aux < start)
+            {
+                visitsDTMbyday.RemoveAt(0);
+                aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
+            }
+            foreach (var item in visitsDTMbyday)
+            {
+                DateTime dt = new DateTime(item.Year, item.Month, item.Day);
+                if (dt == aux)
+                {
+                    ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                    {
+                        Data = dt,
+                        Count = item.Total
+                    };
+                    visitsDate.Add(pkdv);
+                    aux = dt.AddDays(1);
+                }
+                else
+                {
+                    int sparedays = dt.Subtract(aux).Days;
+                    for (int i = 0; i < sparedays; i++)
+                    {
+                        DateTime newday = aux.AddDays(1);
+                        aux = newday;
+                        if (newday == dt)
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = dt,
+                                Count = item.Total
+                            };
+                            visitsDate.Add(pkdv);
+                        }
+                        else
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = newday,
+                                Count = 0
+                            };
+                            visitsDate.Add(pkdv);
+                        }
+                    }
+                }
+
+            }
+
+            VisitsDay pd = new VisitsDay()
+            {
+                visitsDay = visitsDate.OrderBy(x => x.Data)
+            };
+
+            return pd;
+
+        }
+
+        [HttpGet]
+        [Route("dtmcampaignvisitsaction-day")]
+        public async Task<VisitsDay> GetDTMCampaignVisitsByDayAction(DateTime? start, DateTime? end, string action)
+        {
+            var DTMContext = new DTMVisitContext();
+
+            if (start == null) start = startDate;
+            if (end == null) end = endDate;
+
+            var visitsDTMbyday = await DTMContext.dtmVisits.Aggregate()
+            .Match(x => x.DATA_HORA_INICI > start && x.DATA_HORA_INICI <= end && (x.CAMPAIGN_ACTION_ID == action.ToUpper() || x.CAMPAIGN_ACTION_ID == action.ToLower()))
+            .Group(r => new { groupedYear = r.DATA_HORA_INICI.Year, groupedMonth = r.DATA_HORA_INICI.Month, groupedDay = r.DATA_HORA_INICI.Day }, g =>
+               new
+               {
+                   Key = g.Key,
+                   total = g.Count()
+               })
+            .Project(r => new DailyStat()
+            {
+                Day = r.Key.groupedDay,
+                Month = r.Key.groupedMonth,
+                Year = r.Key.groupedYear,
+                Total = r.total
+            })
+            .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
+            .ToListAsync();
+
+            List<ProjectionKeyDateValue> visitsDate = new List<ProjectionKeyDateValue>();
+
+            if (visitsDTMbyday.Count == 0) return new VisitsDay();
+
+            DateTime aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
+            if (aux < start)
+            {
+                visitsDTMbyday.RemoveAt(0);
+                aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
+            }
+            foreach (var item in visitsDTMbyday)
+            {
+                DateTime dt = new DateTime(item.Year, item.Month, item.Day);
+                if (dt == aux)
+                {
+                    ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                    {
+                        Data = dt,
+                        Count = item.Total
+                    };
+                    visitsDate.Add(pkdv);
+                    aux = dt.AddDays(1);
+                }
+                else
+                {
+                    int sparedays = dt.Subtract(aux).Days;
+                    for (int i = 0; i < sparedays; i++)
+                    {
+                        DateTime newday = aux.AddDays(1);
+                        aux = newday;
+                        if (newday == dt)
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = dt,
+                                Count = item.Total
+                            };
+                            visitsDate.Add(pkdv);
+                        }
+                        else
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = newday,
+                                Count = 0
+                            };
+                            visitsDate.Add(pkdv);
+                        }
+                    }
+                }
+
+            }
+
+            VisitsDay pd = new VisitsDay()
+            {
+                visitsDay = visitsDate.OrderBy(x => x.Data)
+            };
+
+            return pd;
+
+        }
+
 
         [HttpGet]
         [Route("pages-day")]
@@ -358,7 +537,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("ga-day")]
-        public GaData RunGAAPI(DateTime start, DateTime end)
+        public GaData RunGAAPI(DateTime start, DateTime end, bool iscampaign = false, string campaign = "", string source = "", string medium = "")
         {
             //var _logger = EngineContext.Current.Resolve<ILogger>();
             string[] scopes =
@@ -394,6 +573,9 @@ namespace WebApi.Controllers
             //result.Dimensions = "ga:date,ga:countryIsoCode,ga:deviceCategory,ga:source,ga:medium,ga:campaign";
             result.Sort = "ga:date";
             result.Dimensions = "ga:date";
+            if (iscampaign) result.Filters = "ga:campaign!=(not set)";
+            if(campaign!="" && source!="" && medium!="") result.Filters = "ga:campaign==" + campaign + ";ga:source==" + source + ";ga:medium==" + medium;
+
             //result.Filters = "ga:campaign==" + utm_name + ";ga:source==" + utm_source + ";ga:medium==" + utm_medium;
             result.MaxResults = 10000;
             //_logger.Information("FC_GA EXECUTE" + DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"), null, null);
