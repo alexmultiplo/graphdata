@@ -1,6 +1,6 @@
 ﻿//var host = 'http://localhost:6161/';
 var host = 'http://192.168.1.20:4400/'
-
+var myLineChart;
 var VisitsDayActionCompare = function () {
 
     var _gacampaigndatasets = new Object();
@@ -91,7 +91,7 @@ var VisitsDayActionCompare = function () {
                 var graf = "visitsaction";
 
                 var ctxl = document.getElementById(graf);
-                var myLineChart = new Chart(ctxl, {
+                myLineChart = new Chart(ctxl, {
                     type: 'line',
                     data: data1
                     //options: options
@@ -104,26 +104,14 @@ var VisitsDayActionCompare = function () {
 
     var Update = function (queryALX, queryGA) {
 
-        var graf = "visitsaction";
-
-        var ctxl = document.getElementById(graf);
-        var myLineChart = new Chart(ctxl, {
-            type: 'line',
-        });
-
+        if (myLineChart != undefined) { myLineChart.destroy(); }
         VisitsDayActionCompare.init(queryALX, queryGA);
 
     };
 
     var ClearLines = function () {
-        var graf = "visitsaction";
 
-        var ctxl = document.getElementById(graf);
-        var myLineChart = new Chart(ctxl, {
-            type: 'line',
-        });
-        myLineChart.clear();
-        myLineChart.destroy();
+        if (myLineChart != undefined) { myLineChart.clear(); }
     };
 
 

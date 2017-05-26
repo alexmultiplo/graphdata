@@ -26,16 +26,19 @@ namespace GraphData.Models
 
     public class PagesCountry
     {
+        public Int64 Total { get; set; }
         public IEnumerable<ProjectionKeyValue> pagesCountry { get; set; }
     }
 
     public class PagesDay
     {
+        public Int64 Total { get; set; }
         public IEnumerable<ProjectionKeyDateValue> pagesDay { get; set; }
     }
 
     public class VisitsDay
     {
+        public int Total { get; set; }
         public IEnumerable<ProjectionKeyDateValue> visitsDay { get; set; }
     }
 

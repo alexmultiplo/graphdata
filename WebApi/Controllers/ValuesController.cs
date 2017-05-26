@@ -45,6 +45,7 @@ namespace WebApi.Controllers
 
             PagesCountry pg = new PagesCountry()
             {
+                Total = visitsbyCountry.Sum(x => x.Count),
                 pagesCountry = visitsbyCountry
             };
 
@@ -134,6 +135,7 @@ namespace WebApi.Controllers
 
             VisitsDay pd = new VisitsDay()
             {
+                Total = visitsDate.Sum(x => x.Count),
                 visitsDay = visitsDate.OrderBy(x => x.Data)
             };
 
@@ -224,6 +226,7 @@ namespace WebApi.Controllers
 
             VisitsDay pd = new VisitsDay()
             {
+                Total = visitsDate.Sum(x => x.Count),
                 visitsDay = visitsDate.OrderBy(x => x.Data)
             };
 
@@ -315,6 +318,7 @@ namespace WebApi.Controllers
 
             VisitsDay pd = new VisitsDay()
             {
+                Total = visitsDate.Sum(x => x.Count),
                 visitsDay = visitsDate.OrderBy(x => x.Data)
             };
 
@@ -426,6 +430,7 @@ namespace WebApi.Controllers
 
             PagesDay pd = new PagesDay()
             {
+                Total = pagesDate.Sum(x => x.Count),
                 pagesDay = pagesDate.OrderBy(x => x.Data)
             };
 
@@ -530,6 +535,7 @@ namespace WebApi.Controllers
 
             PagesDay pd = new PagesDay()
             {
+                Total = pagesDate.Sum(x => x.Count),
                 pagesDay = pagesDate.OrderBy(x => x.Data)
             };
 

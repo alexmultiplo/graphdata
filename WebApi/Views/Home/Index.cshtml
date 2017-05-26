@@ -6,7 +6,7 @@
 }
 
 <div class="row">
-    <h1>Navigation ALX</h1>
+    <h2>ALEXANDRIA</h2>
     <p class="lead">Aquestes gràfiques son una represetació de les propies d'ALX i les dades de Google Analytics referents a visitandorra.com.</p>
 </div>
 <div class="row col-sm-12 ">
@@ -20,11 +20,11 @@
         @*<span class="field-validation-valid" data-valmsg-for="endDate" data-valmsg-replace="true" ></span>*@
     </div>
     <div class=" col-sm-2">
-        <a id="apply-filter" class=""><i class="si si-reload"></i>Cercar</a>
+        <a id="apply-filter" class="btn-link"><i class="si si-reload"></i>Cercar</a>
     </div>
 </div>
 <div class="row">
-    <h3>Total planes vistes al periode @Html.DisplayFor(model => model.TotalObjects) </h3>
+    <h3>Total planes vistes al sistema @Html.DisplayFor(model => model.TotalObjects) </h3>
 </div>
 <div class="row">
     <div id="visitsfullday">
@@ -32,11 +32,13 @@
     </div>
 </div>
 
-<div class="row col-sm-12">
-    <div id="pagesday" class="col-sm-6">
+<div class="row">
+    <div id="pagesday" class="col-sm-9">
         <canvas id="myLineChart"></canvas>
     </div>
-    <div id="usersday" class="col-sm-offset-6">
+</div>
+<div class="row">
+    <div id="usersday" class="col-sm-9">
         <canvas id="uniqueUsers"></canvas>
     </div>
 </div>

@@ -26,6 +26,9 @@ var host = 'http://192.168.1.20:4400/'
 
 var _gadatasets = new Object();
 var _gacampaigndatasets = new Object();
+var myLineChart;
+var myLineChartPages;
+var myLineChartUsers;
 
 var PagesCountry = function () {
 
@@ -364,12 +367,15 @@ var VisitsDayFull = function () {
                         var graf = "visitsfull";
 
                         var ctxl = document.getElementById(graf);
-                        var myLineChart = new Chart(ctxl, {
+                        myLineChart = new Chart(ctxl, {
                             type: 'line',
                             data: data1
                             //options: options
                         });
 
+                        PagesDay.update();
+
+                        UsersDay.update();
 
                     });
                 });
@@ -383,23 +389,15 @@ var VisitsDayFull = function () {
         var graf = "visitsfull";
 
         var ctxl = document.getElementById(graf);
-        var myLineChart = new Chart(ctxl, {
-            type: 'line',
-        });
-        myLineChart.destroy();
+        if (myLineChart != undefined) myLineChart.destroy();
         VisitsDayFull.init();
-        //myLineChart.update();
+
 
     };
 
     var ClearLines = function () {
-        var graf = "visitsfull";
 
-        var ctxl = document.getElementById(graf);
-        var myLineChart = new Chart(ctxl, {
-            type: 'line',
-        });
-        myLineChart.clear();
+        if (myLineChart != undefined) myLineChart.clear();
     };
 
 
@@ -624,7 +622,7 @@ var PagesDay = function () {
             };
 
             var ctxl = document.getElementById("myLineChart");
-            var myLineChart = new Chart(ctxl, {
+            myLineChartPages = new Chart(ctxl, {
                 type: 'line',
                 data: data1
                 //options: options
@@ -636,25 +634,14 @@ var PagesDay = function () {
     };
 
     var Update = function () {
-        var ctxl = document.getElementById("myLineChart");
-        var myLineChart = new Chart(ctxl, {
-            type: 'line',
-        });
-        myLineChart.destroy();
-        //_datasets.labels = null;
-        //_datasets.pages = null;
-        //_datasets.bounces = null;
-        PagesDay.init();
-        //myLineChart.update();
 
+        if (myLineChartPages != undefined) { myLineChartPages.destroy(); }
+        PagesDay.init();
+        
     };
 
     var ClearLines = function () {
-        var ctxl = document.getElementById("myLineChart");
-        var myLineChart = new Chart(ctxl, {
-            type: 'line',
-        });
-        myLineChart.clear();
+        if (myLineChartPages != undefined) { myLineChartPages.clear(); }
     };
 
 
@@ -676,7 +663,6 @@ var PagesDay = function () {
 }();
 
 var UsersDay = function () {
-
 
     var _datasets = new Object();
     var initUsers = function () {
@@ -744,7 +730,7 @@ var UsersDay = function () {
             };
 
             var ctxl = document.getElementById("uniqueUsers");
-            var myLineChart = new Chart(ctxl, {
+            myLineChartUsers = new Chart(ctxl, {
                 type: 'line',
                 data: data1
                 //options: options
@@ -756,21 +742,14 @@ var UsersDay = function () {
     };
 
     var Update = function () {
-        var ctxl = document.getElementById("uniqueUsers");
-        var myLineChart = new Chart(ctxl, {
-            type: 'line',
-        });
-        myLineChart.destroy();
+
+        if (myLineChartUsers != undefined) myLineChartUsers.destroy();
         UsersDay.init();
 
     };
 
     var ClearLines = function () {
-        var ctxl = document.getElementById("uniqueUsers");
-        var myLineChart = new Chart(ctxl, {
-            type: 'line',
-        });
-        myLineChart.clear();
+        if (myLineChartUsers != undefined) myLineChartUsers.clear();
     };
 
     return {
@@ -831,21 +810,6 @@ jQuery(function () {
         }
 
     });
-
-    jQuery('#action-filter').on('click', function () {
-
-        if (jQuery('#startDate').val() != undefined && jQuery('#endDate').val() != undefined) {
-            var queryALX = '?start=' + jQuery('#startDate').val() + '&end=' + jQuery('#endDate').val() + '&action=' + jQuery('#action').val();
-            var queryGA = '?start=' + jQuery('#startDate').val() + '&end=' + jQuery('#endDate').val() + '&campaign=' + jQuery('#utm_campaign').val() + '&source=' + jQuery('#utm_source').val() + '&medium=' + jQuery('#utm_medium').val();
-            console.log(querystring);
-
-            VisitsDayActionCompare.clear();
-            VisitsDayActionCompare.update(queryALX, queryGA);
-
-        }
-
-    });
-
 });
 
 // Initialize when page loads
@@ -867,10 +831,10 @@ jQuery(function () {
     GACampaignDay.reset();
     //GACampaignDay.init();
     VisitsDayFull.init();
-    UsersDay.init();
+    //UsersDay.init();
 
     //PagesCountry.init();
-    PagesDay.init();
+//    PagesDay.init();
 
     //VisitsDay.init(false);
     //VisitsDay.init(true);
