@@ -14,9 +14,9 @@ namespace WebApi.Controllers
         public async Task<ActionResult> Index()
         {
             var NavContext = new NavigationContext();
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "Alexandria - Google Analytics";
 
-            long t = NavContext.Pages.Count(new BsonDocument());
+            //long t = NavContext.Pages.Count(new BsonDocument());
             //var visitsbyCountry = await NavContext.Pages.Aggregate()
             //    .Match("{ \"Atm_Country\" : { $in: [\"ES\", \"FR\", \"GB\", \"RU\", \"AD\", \"DE\", \"US\"] } }")
             //    .Group<ProjectionVisitCountry>("{ _id: '$Atm_Country', Count: { $sum: 1 } }")
@@ -24,7 +24,7 @@ namespace WebApi.Controllers
 
             var model = new IndexModel
             {
-                TotalObjects = t
+                //TotalObjects = t
                 //VisistByCountry = visitsbyCountry
             };
 
@@ -34,7 +34,7 @@ namespace WebApi.Controllers
         [Route("campaign")]
         public async Task<ActionResult> Campaign()
         {
-
+            ViewBag.Title = "Alexandria - Google Analytics";
             var model = new IndexModel();
 
 

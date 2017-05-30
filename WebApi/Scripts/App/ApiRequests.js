@@ -21,11 +21,17 @@
     , position: 'absolute' // Element positioning
 }
 var querystring //= '?start=2017-01-01&end=2017-04-30';
-//var host = 'http://localhost:6161/';
-var host = 'http://192.168.1.20:4400/'
+var host = 'http://localhost:6161/';
+//var host = 'http://192.168.1.20:4400/'
+
+var nf = new Intl.NumberFormat(["es-ES"], {
+    style: "decimal",
+    maximumFractionDigit: 2
+});
 
 var _gadatasets = new Object();
 var _gacampaigndatasets = new Object();
+var tpags = 0; var ipags = 0;
 var myLineChart;
 var myLineChartPages;
 var myLineChartUsers;
@@ -205,6 +211,8 @@ var VisitsDayFull = function () {
     var initLines = function (iscampaign) {
         var _datasetsfull = new Object();
         var _datasetscamp = new Object();
+        var _pags = 0; var _sess = 0; var _sessCamp = 0; var _visits = 0; var _visitscamp = 0;
+        var _ipags = 0; var _isess = 0; var _isessCamp = 0; var _ivisits = 0; var _ivisitscamp = 0;
         var _labl = "Visites per dia"
         var _lablga = "Visites per dia GA"
         var _lablcamp = "Visites Campanya per dia";
@@ -222,6 +230,10 @@ var VisitsDayFull = function () {
             _gacampaigndatasets.users = [];
             _gacampaigndatasets.sessions = [];
 
+            _isessCamp = data.totalsForAllResults['ga:sessions'];
+            _sessCamp = "Sessions de campanya segons Google Analytics: " + nf.format(data.totalsForAllResults['ga:sessions']);
+            jQuery('#gasessionscamp').text(_sessCamp);
+
             $.each(data.rows, function (i, item) {
                 _gacampaigndatasets.labels.push(item[0]);
                 _gacampaigndatasets.pages.push(item[6]);
@@ -237,6 +249,13 @@ var VisitsDayFull = function () {
                 _gadatasets.users = [];
                 _gadatasets.sessions = [];
 
+                ipags = data.totalsForAllResults['ga:pageviews'];
+                _pags = "Pàgines segons Google Analytics: " + nf.format(data.totalsForAllResults['ga:pageviews']);
+                jQuery('#gapages').text(_pags);
+                _isess = data.totalsForAllResults['ga:sessions'];
+                _sess = "Sessions segons Google Analytics: " + nf.format(data.totalsForAllResults['ga:sessions']);
+                jQuery('#gasessions').text(_sess);
+
                 $.each(data.rows, function (i, item) {
                     _gadatasets.labels.push(item[0]);
                     _gadatasets.pages.push(item[6]);
@@ -251,6 +270,15 @@ var VisitsDayFull = function () {
                     _datasetsfull.visits = [];
                     _datasetsfull.bounces = [];
 
+                    _ivisits = data.Total;
+                    _visits = "Visites segons Datamart ALX actual: " + nf.format(data.Total);
+                    jQuery('#alxvisits').text(_visits);
+
+                    if (_isess > 0 && _ivisits > 0) {
+                        var concord = (_ivisits / _isess) * 100;
+                        jQuery('#sessions_concorde').text(nf.format(concord) + '%');
+                    }
+
                     $.each(data.visitsDay, function (i, item) {
                         _datasetsfull.labels.push(item.Data);
                         _datasetsfull.visits.push(item.Count);
@@ -262,6 +290,15 @@ var VisitsDayFull = function () {
                         _datasetscamp.labels = [];
                         _datasetscamp.visits = [];
                         _datasetscamp.bounces = [];
+
+                        _ivisitscamp = data.Total;
+                        _visitscamp = "Visites de campanya segons Datamart ALX actual: " + nf.format(data.Total);
+                        jQuery('#alxvisitscamp').text(_visitscamp);
+
+                        if (_isessCamp > 0 && _ivisitscamp > 0) {
+                            var concord = (_ivisitscamp / _isessCamp) * 100;
+                            jQuery('#sessionscamp_concorde').text(nf.format(concord) + '%');
+                        }
 
                         $.each(data.visitsDay, function (i, item) {
                             _datasetscamp.labels.push(item.Data);
@@ -564,6 +601,14 @@ var PagesDay = function () {
             _datasets.labels = [];
             _datasets.pages = [];
             _datasets.bounces = [];
+             var _ipags = data.Total;
+            _tpags = "Pàgines segons Alexandria: " + nf.format(data.Total);
+            jQuery('#alxpages').text(_tpags);
+
+            if (ipags > 0 && _ipags > 0) {
+                var concord = (_ipags / ipags) * 100;
+                jQuery('#pages_concorde').text(nf.format(concord) + '%');
+            }
 
             $.each(data.pagesDay, function (i, item) {
                 _datasets.labels.push(item.Data);
@@ -792,10 +837,10 @@ jQuery(function () {
 
 
             UsersDay.clear();
-            UsersDay.update();
+            //UsersDay.update();
 
             PagesDay.clear();
-            PagesDay.update();
+            //PagesDay.update();
             //PagesDay.init();
 
             //VisitsDay.clear(false);

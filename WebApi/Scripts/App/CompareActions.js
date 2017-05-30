@@ -1,6 +1,10 @@
-﻿//var host = 'http://localhost:6161/';
-var host = 'http://192.168.1.20:4400/'
+﻿var host = 'http://localhost:6161/';
+//var host = 'http://192.168.1.20:4400/'
 var myLineChart;
+var nf = new Intl.NumberFormat(["es-ES"], {
+    style: "decimal",
+    maximumFractionDigit: 2
+});
 var VisitsDayActionCompare = function () {
 
     var _gacampaigndatasets = new Object();
@@ -9,7 +13,8 @@ var VisitsDayActionCompare = function () {
         var jsonAPIGA = host + 'api/data/ga-day/' + queryGA;
         var _labl = "Visites per dia"
         var _lablga = "Visites per dia GA"
-
+        var _pags = 0; var _sess = 0; var _sessCamp = 0; var _visits = 0; var _visitscamp = 0;
+        var _ipags = 0; var _isess = 0; var _isessCamp = 0; var _ivisits = 0; var _ivisitscamp = 0;
 
         jQuery.getJSON(jsonAPIGA).done(function (data) {
             console.log(jsonAPIGA);
@@ -18,12 +23,18 @@ var VisitsDayActionCompare = function () {
             _gacampaigndatasets.users = [];
             _gacampaigndatasets.sessions = [];
 
+
+            _isessCamp = data.totalsForAllResults['ga:sessions'];
+            _sessCamp = "Sessions de campanya segons Google Analytics: " + nf.format(data.totalsForAllResults['ga:sessions']);
+            jQuery('#gasessionscamp').text(_sessCamp);
+
             $.each(data.rows, function (i, item) {
                 _gacampaigndatasets.labels.push(item[0]);
                 _gacampaigndatasets.pages.push(item[6]);
                 _gacampaigndatasets.users.push(item[2]);
                 _gacampaigndatasets.sessions.push(item[1]);
             });
+
 
             jQuery.getJSON(jsonAPIALX).done(function (data) {
                 var _datasetsAlx = new Object();
@@ -37,6 +48,15 @@ var VisitsDayActionCompare = function () {
                     _datasetsAlx.labels.push(item.Data);
                     _datasetsAlx.visits.push(item.Count);
                 });
+
+                _ivisitscamp = data.Total;
+                _visitscamp = "Visites de campanya segons Datamart ALX actual: " + nf.format(data.Total);
+                jQuery('#alxvisitscamp').text(_visitscamp);
+
+                if (_isessCamp > 0 && _ivisitscamp > 0) {
+                    var concord = (_ivisitscamp / _isessCamp) * 100;
+                    jQuery('#sessionscamp_concorde').text(nf.format(concord) + '%');
+                }
 
                 var data1 = {
                     labels: _datasetsAlx.labels,  //["January", "February", "March", "April", "May", "June", "July", "August", "September"],

@@ -1,5 +1,5 @@
 ﻿@model GraphData.Models.IndexModel
- 
+
 @section Scripts
 {
     <script src="@Url.Content("~/Scripts/App/apirequests.js")"></script>
@@ -23,8 +23,23 @@
         <a id="apply-filter" class="btn-link"><i class="si si-reload"></i>Cercar</a>
     </div>
 </div>
-<div class="row">
-    <h3>Total planes vistes al sistema @Html.DisplayFor(model => model.TotalObjects) </h3>
+<div class="row">&nbsp;</div>
+<div class="row col-sm-12">
+    <div class=" col-sm-4">
+        <p id="alxvisits"></p>
+        <p id="gasessions"></p>
+        <p id="sessions_concorde"></p>
+    </div>
+    <div class=" col-sm-4">
+        <p id="alxvisitscamp"></p>
+        <p id="gasessionscamp"></p>
+        <p id="sessionscamp_concorde"></p>
+    </div>
+    <div class=" col-sm-4">
+        <p id="alxpages"></p>
+        <p id="gapages"></p> 
+        <p id="pages_concorde"></p>
+    </div>
 </div>
 <div class="row">
     <div id="visitsfullday">
