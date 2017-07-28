@@ -24,10 +24,12 @@ namespace WebApi
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/bootstrap-datepicker.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css").Include("~/Content/bootstrap.min.css", new CssRewriteUrlTransform()));
 
             bundles.Add(new ScriptBundle("~/bundles/charts").Include(
 "~/Scripts/Chart.js", "~/Scripts/moment.js", "~/Scripts/spin.js", "~/Scripts/App/basics.js"));
+
+
         }
     }
 }

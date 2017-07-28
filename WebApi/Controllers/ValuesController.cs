@@ -79,7 +79,7 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            List<ProjectionKeyDateValue> visitsDate = new List<ProjectionKeyDateValue>();
+            
 
             if (visitsDTMbyday.Count == 0) return new VisitsDay();
 
@@ -89,7 +89,9 @@ namespace WebApi.Controllers
                 visitsDTMbyday.RemoveAt(0);
                 aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
             }
-            foreach (var item in visitsDTMbyday)
+
+            List<ProjectionKeyDateValue> visitsDate = NormalizeDayList(visitsDTMbyday, aux);
+            /*foreach (var item in visitsDTMbyday)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
                 if (dt == aux)
@@ -131,7 +133,7 @@ namespace WebApi.Controllers
                 }
 
 
-            }
+            }*/
 
             VisitsDay pd = new VisitsDay()
             {
@@ -171,8 +173,6 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            List<ProjectionKeyDateValue> visitsDate = new List<ProjectionKeyDateValue>();
-
             if (visitsDTMbyday.Count == 0) return new VisitsDay();
 
             DateTime aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
@@ -181,7 +181,10 @@ namespace WebApi.Controllers
                 visitsDTMbyday.RemoveAt(0);
                 aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
             }
-            foreach (var item in visitsDTMbyday)
+
+            List<ProjectionKeyDateValue> visitsDate = NormalizeDayList(visitsDTMbyday, aux);
+
+            /*foreach (var item in visitsDTMbyday)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
                 if (dt == aux)
@@ -222,7 +225,7 @@ namespace WebApi.Controllers
                     }
                 }
 
-            }
+            }*/
 
             VisitsDay pd = new VisitsDay()
             {
@@ -263,7 +266,7 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            List<ProjectionKeyDateValue> visitsDate = new List<ProjectionKeyDateValue>();
+            
 
             if (visitsDTMbyday.Count == 0) return new VisitsDay();
 
@@ -273,6 +276,9 @@ namespace WebApi.Controllers
                 visitsDTMbyday.RemoveAt(0);
                 aux = new DateTime(visitsDTMbyday[0].Year, visitsDTMbyday[0].Month, visitsDTMbyday[0].Day);
             }
+            List<ProjectionKeyDateValue> visitsDate = NormalizeDayList(visitsDTMbyday, aux);
+
+            /*List<ProjectionKeyDateValue> visitsDate = new List<ProjectionKeyDateValue>();
             foreach (var item in visitsDTMbyday)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
@@ -314,7 +320,7 @@ namespace WebApi.Controllers
                     }
                 }
 
-            }
+            }*/
 
             VisitsDay pd = new VisitsDay()
             {
@@ -374,7 +380,7 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
+            
 
             if (visitsbyCountry.Count == 0) return new PagesDay();
 
@@ -384,6 +390,10 @@ namespace WebApi.Controllers
                 visitsbyCountry.RemoveAt(0);
                 aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
             }
+
+            List<ProjectionKeyDateValue> pagesDate = NormalizeDayList(visitsbyCountry, aux);
+
+            /*List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
             foreach (var item in visitsbyCountry)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
@@ -400,7 +410,7 @@ namespace WebApi.Controllers
                 else
                 {
                     int sparedays = dt.Subtract(aux).Days;
-                    for (int i = 0; i < sparedays; i++)
+                    for (int i = 0; i <= sparedays; i++)
                     {
                         DateTime newday = aux.AddDays(1);
                         aux = newday;
@@ -424,9 +434,7 @@ namespace WebApi.Controllers
                         }
                     }
                 }
-
-
-            }
+            }*/
 
             PagesDay pd = new PagesDay()
             {
@@ -435,6 +443,55 @@ namespace WebApi.Controllers
             };
 
             return pd;
+        }
+
+        private List<ProjectionKeyDateValue> NormalizeDayList(List<DailyStat> dailyList, DateTime aux)
+        {
+            List<ProjectionKeyDateValue> countsDate = new List<ProjectionKeyDateValue>();
+            foreach (var item in dailyList)
+            {
+                DateTime dt = new DateTime(item.Year, item.Month, item.Day);
+                if (dt == aux)
+                {
+                    ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                    {
+                        Data = dt,
+                        Count = item.Total
+                    };
+                    countsDate.Add(pkdv);
+                    aux = dt.AddDays(1);
+                }
+                else
+                {
+                    int sparedays = dt.Subtract(aux).Days;
+                    for (int i = 0; i <= sparedays; i++)
+                    {
+                        DateTime newday = aux.AddDays(i);
+                        //aux = newday;
+                        if (newday == dt)
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = dt,
+                                Count = item.Total
+                            };
+                            aux = dt.AddDays(1);
+                            countsDate.Add(pkdv);
+                        }
+                        else
+                        {
+                            ProjectionKeyDateValue pkdv = new ProjectionKeyDateValue()
+                            {
+                                Data = newday,
+                                Count = 0
+                            };
+                            countsDate.Add(pkdv);
+                        }
+                    }
+                }
+            }
+
+            return countsDate;
         }
 
         [HttpGet]
@@ -479,8 +536,7 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            List<ProjectionKeyDateValue> pagesDate = new List<ProjectionKeyDateValue>();
-
+            
             if (visitsbyCountry.Count == 0) return new PagesDay();
 
             DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
@@ -489,7 +545,10 @@ namespace WebApi.Controllers
                 visitsbyCountry.RemoveAt(0);
                 aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
             }
-            foreach (var item in visitsbyCountry)
+
+            List<ProjectionKeyDateValue> pagesDate = NormalizeDayList(visitsbyCountry, aux);
+
+            /*foreach (var item in visitsbyCountry)
             {
                 DateTime dt = new DateTime(item.Year, item.Month, item.Day);
                 if (dt == aux)
@@ -531,7 +590,7 @@ namespace WebApi.Controllers
                 }
 
 
-            }
+            }*/
 
             PagesDay pd = new PagesDay()
             {

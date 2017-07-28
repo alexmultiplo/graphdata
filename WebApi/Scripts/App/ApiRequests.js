@@ -865,7 +865,7 @@ jQuery(function () {
     if (getUrlParameter('start') != '' && getUrlParameter('end') != '') {
         querystring = '?start=' + getUrlParameter('start') + '&end=' + getUrlParameter('end');
     } else {
-        querystring = '?start=2017-03-30&end=2017-07-01';
+        querystring = '?start=2017-06-30&end=2017-07-30';
     }
 
     console.log(querystring);

@@ -17,7 +17,7 @@ var reduceFunction0 = function (keys, vals) {
 
 
 var reduceFunction2 = function (keys, vals) {
-
+    //load("/Users/Usuario/Documents/Visual Studio 2017/Projects/GraphData/WebApi/Scripts/MapReduce/mapreducevisits.js")
     var i = 0;
     var nv = 0;
     var aux = undefined;
