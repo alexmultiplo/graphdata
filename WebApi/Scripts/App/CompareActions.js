@@ -1,5 +1,4 @@
 ﻿var host = 'http://localhost:6161/';
-//var host = 'http://192.168.1.20:4400/'
 var myLineChart;
 var nf = new Intl.NumberFormat(["es-ES"], {
     style: "decimal",
