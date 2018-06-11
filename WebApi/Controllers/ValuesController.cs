@@ -53,6 +53,135 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("aggvisits-day-action")]
+        public async Task<ActionVisitsDay> AggDTMVisitsByDay(DateTime? start, DateTime? end, string campaign_action = "all")
+        {
+            var DTMContext = new DTMVisitContext();
+            campaign_action = campaign_action.ToUpper();
+            if (!campaign_action.StartsWith("{")) campaign_action = "{" + campaign_action;
+            if (!campaign_action.EndsWith("{")) campaign_action = campaign_action + "}";
+
+            if (start == null) start = startDate;
+            if (end == null) end = endDate;
+            var visitsDTMActionbyday = new List<DailyStatAction>();
+
+            if (campaign_action == "all")
+            {
+
+                visitsDTMActionbyday = await DTMContext.dtmVisits.Aggregate()
+               .Match(x => x.DATA_HORA_INICI > start && x.DATA_HORA_INICI <= end)
+               .Group(r => new { groupedYear = r.DATA_HORA_INICI.Year, groupedMonth = r.DATA_HORA_INICI.Month, groupedDay = r.DATA_HORA_INICI.Day, r.CAMPAIGN_ACTION_ID }, g =>
+                  new
+                  {
+                      Key = g.Key,
+                      total = g.Count()
+                  })
+               .Project(r => new DailyStatAction()
+               {
+                   Day = r.Key.groupedDay,
+                   Month = r.Key.groupedMonth,
+                   Year = r.Key.groupedYear,
+                   Action = r.Key.CAMPAIGN_ACTION_ID,
+                   Total = r.total
+               })
+               .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
+               .ToListAsync();
+
+
+            }
+            else
+            {
+                visitsDTMActionbyday = await DTMContext.dtmVisits.Aggregate()
+                    .Match(x => x.DATA_HORA_INICI > start && x.DATA_HORA_INICI <= end && x.CAMPAIGN_ACTION_ID == campaign_action)
+                    .Group(r => new { groupedYear = r.DATA_HORA_INICI.Year, groupedMonth = r.DATA_HORA_INICI.Month, groupedDay = r.DATA_HORA_INICI.Day, r.CAMPAIGN_ACTION_ID }, g =>
+                      new
+                      {
+                          Key = g.Key,
+                          total = g.Count()
+                      })
+                    .Project(r => new DailyStatAction()
+                    {
+                        Day = r.Key.groupedDay,
+                        Month = r.Key.groupedMonth,
+                        Year = r.Key.groupedYear,
+                        Action = r.Key.CAMPAIGN_ACTION_ID,
+                        Total = r.total
+                    })
+                    .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
+                    .ToListAsync();
+            }
+
+
+
+            if (visitsDTMActionbyday.Count == 0) return new ActionVisitsDay();
+
+            DateTime aux = new DateTime(visitsDTMActionbyday[0].Year, visitsDTMActionbyday[0].Month, visitsDTMActionbyday[0].Day);
+            if (aux < start)
+            {
+                visitsDTMActionbyday.RemoveAt(0);
+                aux = new DateTime(visitsDTMActionbyday[0].Year, visitsDTMActionbyday[0].Month, visitsDTMActionbyday[0].Day);
+            }
+
+            //List<ProjectionKeyDateValue> visitsDate = NormalizeDayList(visitsDTMbyday, aux);
+            List<ProjectionKeyDateActionValue> visitsDate = new List<ProjectionKeyDateActionValue>();
+            foreach (var item in visitsDTMActionbyday)
+            {
+                DateTime dt = new DateTime(item.Year, item.Month, item.Day);
+                if (dt == aux)
+                {
+                    ProjectionKeyDateActionValue pkdv = new ProjectionKeyDateActionValue()
+                    {
+                        day = dt,
+                        campaign_action = item.Action,
+                        count = item.Total
+                    };
+                    visitsDate.Add(pkdv);
+                    aux = dt.AddDays(1);
+                }
+                else
+                {
+                    int sparedays = dt.Subtract(aux).Days;
+                    for (int i = 0; i < sparedays; i++)
+                    {
+                        DateTime newday = aux.AddDays(1);
+                        aux = newday;
+                        if (newday == dt)
+                        {
+                            ProjectionKeyDateActionValue pkdv = new ProjectionKeyDateActionValue()
+                            {
+                                day = dt,
+                                campaign_action = item.Action,
+                                count = item.Total
+                            };
+                            visitsDate.Add(pkdv);
+                        }
+                        else
+                        {
+                            ProjectionKeyDateActionValue pkdv = new ProjectionKeyDateActionValue()
+                            {
+                                day = dt,
+                                campaign_action = item.Action,
+                                count = 0
+                            };
+                            visitsDate.Add(pkdv);
+                        }
+                    }
+                }
+
+
+            }
+
+            ActionVisitsDay pd = new ActionVisitsDay()
+            {
+                Total = visitsDate.Sum(x => x.count),
+                visitsDay = visitsDate.OrderBy(x => x.day)
+            };
+
+            return pd;
+
+        }
+
+        [HttpGet]
         [Route("dtmvisits-day")]
         public async Task<VisitsDay> GetDTMVisitsByDay(DateTime? start, DateTime? end)
         {
@@ -79,7 +208,7 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            
+
 
             if (visitsDTMbyday.Count == 0) return new VisitsDay();
 
@@ -266,7 +395,7 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            
+
 
             if (visitsDTMbyday.Count == 0) return new VisitsDay();
 
@@ -380,7 +509,7 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            
+
 
             if (visitsbyCountry.Count == 0) return new PagesDay();
 
@@ -536,7 +665,7 @@ namespace WebApi.Controllers
             .SortBy(x => x.Day).SortBy(x => x.Month).SortBy(x => x.Year)
             .ToListAsync();
 
-            
+
             if (visitsbyCountry.Count == 0) return new PagesDay();
 
             DateTime aux = new DateTime(visitsbyCountry[0].Year, visitsbyCountry[0].Month, visitsbyCountry[0].Day);
@@ -641,7 +770,7 @@ namespace WebApi.Controllers
             result.Sort = "ga:date";
             result.Dimensions = "ga:date";
             if (iscampaign) result.Filters = "ga:campaign!=(not set)";
-            if(campaign!="" && source!="" && medium!="") result.Filters = "ga:campaign==" + campaign + ";ga:source==" + source + ";ga:medium==" + medium;
+            if (campaign != "" && source != "" && medium != "") result.Filters = "ga:campaign==" + campaign + ";ga:source==" + source + ";ga:medium==" + medium;
 
             //result.Filters = "ga:campaign==" + utm_name + ";ga:source==" + utm_source + ";ga:medium==" + utm_medium;
             result.MaxResults = 10000;

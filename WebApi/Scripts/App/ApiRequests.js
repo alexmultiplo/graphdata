@@ -20,8 +20,8 @@
     , hwaccel: false // Whether to use hardware acceleration
     , position: 'absolute' // Element positioning
 }
-var querystring //= '?start=2017-01-01&end=2017-04-30';
-var host = 'http://localhost:6161/';
+var querystring //= '?start=2018-01-01&end=2017-04-30';
+var host = 'http://localhost:4040/';
 //var host = 'http://192.168.1.20:4400/'
 
 var nf = new Intl.NumberFormat(["es-ES"], {
@@ -865,7 +865,7 @@ jQuery(function () {
     if (getUrlParameter('start') != '' && getUrlParameter('end') != '') {
         querystring = '?start=' + getUrlParameter('start') + '&end=' + getUrlParameter('end');
     } else {
-        querystring = '?start=2017-06-30&end=2017-07-30';
+        querystring = '?start=2018-01-01&end=2018-12-31';
     }
 
     console.log(querystring);

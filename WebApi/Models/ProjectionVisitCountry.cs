@@ -24,6 +24,14 @@ namespace GraphData.Models
         public int Count { get; set; }
     }
 
+    public class ProjectionKeyDateActionValue
+    {
+        [BsonElement("_id")]
+        public DateTime day { get; set; }
+        public string campaign_action { get; set; }
+        public int count { get; set; }
+    }
+
     public class PagesCountry
     {
         public Int64 Total { get; set; }
@@ -42,6 +50,12 @@ namespace GraphData.Models
         public IEnumerable<ProjectionKeyDateValue> visitsDay { get; set; }
     }
 
+    public class ActionVisitsDay
+    {
+        public int Total { get; set; }
+        public IEnumerable<ProjectionKeyDateActionValue> visitsDay { get; set; }
+    }
+
     public class DailyStat
     {
         public int Day { get; set; }
@@ -50,6 +64,14 @@ namespace GraphData.Models
         public int Total { get; set; }
     }
 
+    public class DailyStatAction
+    {
+        public int Day { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public int Total { get; set; }
+        public string Action { get; set; }
+    }
 
     public class DailyUserStat
     {
