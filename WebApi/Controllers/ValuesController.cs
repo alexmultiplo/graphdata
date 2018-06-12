@@ -159,7 +159,7 @@ namespace WebApi.Controllers
                         {
                             ProjectionKeyDateActionValue pkdv = new ProjectionKeyDateActionValue()
                             {
-                                day = dt,
+                                day = newday,
                                 campaign_action = item.Action,
                                 count = 0
                             };
